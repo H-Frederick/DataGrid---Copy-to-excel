@@ -10,9 +10,9 @@ $(function () {
         }
 
         navigator.clipboard.writeText(str).then(() => {
-            notify("Row data copied to clipboard.", "success", 500);
+            DevExpress.ui.notify("Row data copied to clipboard.", "success", 500);
         }, () => {
-            notify("Row data was not copied. There are insufficient permissions for this action.", "error", 500);
+            DevExpress.ui.notify("Row data was not copied. There are insufficient permissions for this action.", "error", 500);
         });
     }
 
@@ -38,7 +38,7 @@ $(function () {
         col = col.filter((x) => x.dataField !== undefined && x.allowExporting === true);
         let lastColumn = col[col.length - 1].dataField;
 
-        exportDataGrid({
+        DevExpress.excelExporter.exportDataGrid({
             component: grid,
             worksheet: sheet,
             customizeCell: function (options) {
@@ -87,9 +87,9 @@ $(function () {
         }).then(() => {
             console.log(str);
             navigator.clipboard.writeText(str).then(() => {
-                notify("Grid data copied to clipboard.", "success", 500);
+                DevExpress.ui.notify("Grid data copied to clipboard.", "success", 500);
             }, () => {
-                notify("Grid data was not copied. There are insufficient permissions for this action.", "error", 500);
+                DevExpress.ui.notify("Grid data was not copied. There are insufficient permissions for this action.", "error", 500);
             });
         });
     }
