@@ -5,21 +5,19 @@ $(function () {
 
         for (let prop in data) {
             if (data.hasOwnProperty(prop)) {
-                str += data[prop] + "\t";
+                str += `${data[prop]}\t`;
             }
         }
 
         navigator.clipboard.writeText(str).then(() => {
-            DevExpress.ui.notify("Row data copied to clipboard.", "success", 500);
+            notify("Row data copied to clipboard.", "success", 500);
         }, () => {
-            DevExpress.ui.notify("Row data was not copied. There are insufficient permissions for this action.", "error", 500);
+            notify("Row data was not copied. There are insufficient permissions for this action.", "error", 500);
         });
     }
 
     function toolbarCopy(e) {
-        let toolbarItems = e.toolbarOptions.items;
-
-        toolbarItems.push({
+        e.toolbarOptions.items.push({
             widget: "dxButton",
             location: "after",
             options: {
@@ -40,40 +38,40 @@ $(function () {
         col = col.filter((x) => x.dataField !== undefined && x.allowExporting === true);
         let lastColumn = col[col.length - 1].dataField;
 
-        DevExpress.excelExporter.exportDataGrid({
+        exportDataGrid({
             component: grid,
             worksheet: sheet,
             customizeCell: function (options) {
-                let { gridCell, excelCell } = options;
+                let { gridCell } = options;
                 let field = gridCell.column.dataField;
 
                 switch (gridCell.rowType) {
                     // export header row
                     case "header":
-                        str += gridCell.column.caption + "\t";
+                        str += `${gridCell.column.caption}\t`;
                         break;
                     // export data row
                     case "data":
-                        str += gridCell.value + "\t";
+                        str += `${gridCell.value}\t`;
                         break;
                     // export group row
                     case "group":
                         if (gridCell.value)
-                            str += (field + ": " + gridCell.value + " ");
+                            str += `${field}: ${gridCell.value} `;
                         
                         if (gridCell.groupSummaryItems !== undefined && gridCell.groupSummaryItems.length >= 1) {
                             gridCell.groupSummaryItems.forEach(x => {
-                                str += " " + (x.name + ": " + x.value + " ");
+                                str += ` ${x.name}: ${x.value} `;
                             });
                         }
 
-                        str += "\t";
+                        str += `\t`;
 
                         break;
                     // export groupFooter & totalFooter. Create a separate switch case if you need different actions (ie different spacing)
                     case "groupFooter":
                     case "totalFooter":
-                        str += ((gridCell.value === undefined) ? "\t" : gridCell.totalSummaryItemName + ": " + gridCell.value + "\t");
+                        str += (gridCell.value === undefined ? `\t` : `${gridCell.totalSummaryItemName}: ${gridCell.value}\t`);
 
                         break;
                     default:
@@ -83,15 +81,15 @@ $(function () {
                 }
 
                 if (field === lastColumn) {
-                    str += "\r\n";
+                    str += `\r\n`;
                 }
             }
         }).then(() => {
             console.log(str);
             navigator.clipboard.writeText(str).then(() => {
-                DevExpress.ui.notify("Grid data copied to clipboard.", "success", 500);
+                notify("Grid data copied to clipboard.", "success", 500);
             }, () => {
-                DevExpress.ui.notify("Grid data was not copied. There are insufficient permissions for this action.", "error", 500);
+                notify("Grid data was not copied. There are insufficient permissions for this action.", "error", 500);
             });
         });
     }
