@@ -4,15 +4,13 @@ import React from 'react';
 import './App.css';
 import { data } from "./data";
 
-import { Editing, Column, GroupPanel, GroupItem, TotalItem, FilterRow, Summary } from "devextreme-react/data-grid";
-import DataGrid from "devextreme-react/data-grid";
+import DataGrid, { Editing, Column, GroupPanel, GroupItem, TotalItem, FilterRow, Summary } from "devextreme-react/data-grid";
 import {exportDataGrid} from "devextreme/excel_exporter";
 import notify from "devextreme/ui/notify";
 import DataSource from 'devextreme/data/data_source';
 import ArrayStore from 'devextreme/data/array_store';
 
 import * as ExcelJS from "exceljs";
-//import saveAs from 'file-saver';
 
 const dataSource = new DataSource({
     store: new ArrayStore({
@@ -22,13 +20,21 @@ const dataSource = new DataSource({
 });
 
 class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.gridRef = React.createRef();
+
+        this.copyViaExcelExport = this.copyViaExcelExport.bind(this);
+        this.toolbarCopy = this.toolbarCopy.bind(this);
+    }
+
     rowCopy(e) {
         let data = e.row.data;
         let str = "";
 
         for (let prop in data) {
-            if (data.hasOwnProperty(prop)) {
-                str += data[prop] + "\t";
+            if (data.hasOwnProperty(prop)) { // not sure how to simplify
+                str += `${data[prop]}\t`;
             }
         }
 
@@ -40,9 +46,7 @@ class App extends React.Component {
     }
 
     toolbarCopy(e) {
-        let toolbarItems = e.toolbarOptions.items;
-
-        toolbarItems.push({
+        e.toolbarOptions.items.push({
             widget: "dxButton",
             location: "after",
             options: {
@@ -67,36 +71,36 @@ class App extends React.Component {
             component: this.grid,
             worksheet: sheet,
             customizeCell: function (options) {
-                let { gridCell, excelCell } = options;
+                let { gridCell } = options;
                 let field = gridCell.column.dataField;
 
                 switch (gridCell.rowType) {
                     // export header row
                     case "header":
-                        str += gridCell.column.caption + "\t";
+                        str += `${gridCell.column.caption}\t`;
                         break;
                     // export data row
                     case "data":
-                        str += gridCell.value + "\t";
+                        str += `${gridCell.value}\t`;
                         break;
                     // export group row
                     case "group":
                         if (gridCell.value)
-                            str += (field + ": " + gridCell.value + " ");
+                            str += `${field}: ${gridCell.value} `;
                         
                         if (gridCell.groupSummaryItems !== undefined && gridCell.groupSummaryItems.length >= 1) {
                             gridCell.groupSummaryItems.forEach(x => {
-                                str += " " + (x.name + ": " + x.value + " ");
+                                str += ` ${x.name}: ${x.value} `;
                             });
                         }
 
-                        str += "\t";
+                        str += `\t`;
 
                         break;
                     // export groupFooter & totalFooter. Create a separate switch case if you need different actions (ie different spacing)
                     case "groupFooter":
                     case "totalFooter":
-                        str += ((gridCell.value === undefined) ? "\t" : gridCell.totalSummaryItemName + ": " + gridCell.value + "\t");
+                        str += (gridCell.value === undefined ? `\t` : `${gridCell.totalSummaryItemName}: ${gridCell.value}\t`);
 
                         break;
                     default:
@@ -106,7 +110,7 @@ class App extends React.Component {
                 }
 
                 if (field === lastColumn) {
-                    str += "\r\n";
+                    str += `\r\n`;
                 }
             }
         }).then(() => {
@@ -121,15 +125,6 @@ class App extends React.Component {
     
     get grid() {
         return this.gridRef.current.instance;
-    }
-
-    constructor(props) {
-        super(props);
-        this.gridRef = React.createRef();
-
-        this.copyViaExcelExport = this.copyViaExcelExport.bind(this);
-        this.toolbarCopy = this.toolbarCopy.bind(this);
-        this.rowCopy = this.rowCopy.bind(this);
     }
 
     render() {
@@ -174,6 +169,7 @@ class App extends React.Component {
                     <GroupItem 
                         column="IsTested" 
                         summaryType="count"
+                        showInGroupFooter={true}
                         name="Count"
                         alignByColumn={true} />
                     <TotalItem
