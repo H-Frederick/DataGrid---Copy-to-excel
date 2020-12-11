@@ -18,7 +18,6 @@ export class AppComponent {
 
     constructor() {
         this.copyViaExcelExport = this.copyViaExcelExport.bind(this);
-        //this.data = data.data;
 
         this.dataSource = {
             store: new ArrayStore({
