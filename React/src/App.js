@@ -33,7 +33,7 @@ class App extends React.Component {
         let str = "";
 
         for (let prop in data) {
-            if (data.hasOwnProperty(prop)) { // not sure how to simplify
+            if (data[prop] !== undefined) {
                 str += `${data[prop]}\t`;
             }
         }

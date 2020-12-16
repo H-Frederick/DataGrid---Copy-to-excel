@@ -32,7 +32,7 @@ export class AppComponent {
         let str = "";
 
         for (let prop in data) {
-            if (data.hasOwnProperty(prop)) {
+            if (data[prop] !== undefined) {
                 str += `${data[prop]}\t`;
             }
         }
