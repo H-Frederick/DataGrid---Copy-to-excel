@@ -27,7 +27,7 @@
         column="LastName"
         summary-type="count"
         name="Count"
-        :alignByColumn="true"
+        :align-by-column="true"
       />
       <DxGroupItem column="LastName" summary-type="count" name="Count" />
       <DxGroupItem
