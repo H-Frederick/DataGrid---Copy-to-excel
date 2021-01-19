@@ -4,8 +4,8 @@ import React from 'react';
 import './App.css';
 import { data } from "./data";
 
-import DataGrid, { Editing, Column, GroupPanel, GroupItem, TotalItem, FilterRow, Summary } from "devextreme-react/data-grid";
-import {exportDataGrid} from "devextreme/excel_exporter";
+import DataGrid, { Editing, Column, GroupPanel, GroupItem, TotalItem, FilterRow, Summary, Button } from "devextreme-react/data-grid";
+import { exportDataGrid } from "devextreme/excel_exporter";
 import notify from "devextreme/ui/notify";
 import DataSource from 'devextreme/data/data_source';
 import ArrayStore from 'devextreme/data/array_store';
@@ -87,7 +87,7 @@ class App extends React.Component {
                     case "group":
                         if (gridCell.value)
                             str += `${field}: ${gridCell.value} `;
-                        
+
                         if (gridCell.groupSummaryItems !== undefined && gridCell.groupSummaryItems.length >= 1) {
                             gridCell.groupSummaryItems.forEach(x => {
                                 str += ` ${x.name}: ${x.value} `;
@@ -122,7 +122,7 @@ class App extends React.Component {
             });
         });
     }
-    
+
     get grid() {
         return this.gridRef.current.instance;
     }
@@ -140,34 +140,33 @@ class App extends React.Component {
                 <Column dataField="HireDate" />
                 <Column dataField="Residence" groupIndex={0} />
                 <Column dataField="IsTested" />
-                <Column type="buttons"
-                    buttons={["edit", "delete", {
-                        hint: "Copy row",
-                        icon: "copy",
-                        onClick: this.rowCopy
-                    }]} />
-                <Editing 
-                        mode="popup"
-                        allowAdding={true}
-                        allowUpdating={true}
-                        allowDeleting={true}
-                        useIcons={true}
-                        />
+                <Column type="buttons">
+                    <Button name="edit"></Button>
+                    <Button name="delete"></Button>
+                    <Button hint="Copy row" icon="copy" onClick={this.rowCopy}></Button>
+                </Column>
+                <Editing
+                    mode="popup"
+                    allowAdding={true}
+                    allowUpdating={true}
+                    allowDeleting={true}
+                    useIcons={true}
+                />
                 <FilterRow visible={true} />
                 <GroupPanel visible={true} />
 
                 <Summary>
-                    <GroupItem 
-                        column="LastName" 
+                    <GroupItem
+                        column="LastName"
                         summaryType="count"
                         name="Count"
                         alignByColumn={true} />
-                    <GroupItem 
-                        column="LastName" 
+                    <GroupItem
+                        column="LastName"
                         summaryType="count"
                         name="Count" />
-                    <GroupItem 
-                        column="IsTested" 
+                    <GroupItem
+                        column="IsTested"
                         summaryType="count"
                         showInGroupFooter={true}
                         name="Count"
